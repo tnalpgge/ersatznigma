@@ -10,4 +10,7 @@ Works with Mac OS X only.
 
 # Warning
 
-**Do not broadcast this generated audio on the air.**
+**Do not broadcast this generated audio on the air.** 
+
+If you get caught, there may be nasty legal consequences.  The author
+of the software disclaims all responsibility if you do this.

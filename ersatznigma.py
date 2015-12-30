@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import logging
 import random
 import subprocess
@@ -69,17 +70,22 @@ class InstructionFactory:
 
 
 class Renderer:
-    def __init__(self):
-        self.voice = 'Daniel'
+    def __init__(self, voice=None):
+        self.voice = voice
 
     def render(self, instruction):
-        lips = subprocess.Popen(['say', '--voice', self.voice], stdin=subprocess.PIPE)
+        cmd = ['say']
+        if self.voice is not None:
+            cmd.append('--voice')
+            cmd.append(self.voice)
+        lips = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         syllables = instruction.render()
         language = bytes(syllables, 'utf-8')
         lips.communicate(language)
 
 class ErsatzNigma:
-    def __init__(self):
+    def __init__(self, args):
+        self.voice = args.voice
         self.format = E07SingleMessage(10, 10)
         self.fullmessage = None
         self.instructions = None
@@ -89,17 +95,19 @@ class ErsatzNigma:
 
     def speak(self):
         instructions = InstructionFactory().manufacture(self.fullmessage)
-        renderer = Renderer()
+        renderer = Renderer(self.voice)
         for i in instructions:
             logging.debug(i)
             renderer.render(i)
-        renderer.shutdown()
  
 def int2group(n):
     return [x for x in '{}'.format(n)]
 
 def main():
-    e = ErsatzNigma()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--voice', help='Alternate voice for speaking the numbers')
+    args = parser.parse_args()
+    e = ErsatzNigma(args)
     e.generate()
     e.speak()
 
