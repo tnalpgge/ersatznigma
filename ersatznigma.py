@@ -44,9 +44,10 @@ class InstructionFactory:
         return output[1:]
 
 class Renderer:
-    def __init__(self, voice, show):
+    def __init__(self, voice, show, rate):
         self.voice = voice
         self.show = show
+        self.rate = rate
 
     def render(self, instruction):
         cmd = ['say']
@@ -55,6 +56,9 @@ class Renderer:
         if self.voice is not None:
             cmd.append('--voice')
             cmd.append(self.voice)
+        if self.rate is not None:
+            cmd.append('--rate')
+            cmd.append(str(self.rate))
         lips = subprocess.Popen(cmd, stdin=subprocess.PIPE)
         syllables = instruction.render()
         logging.debug(syllables)
@@ -65,7 +69,8 @@ class ErsatzNigma:
     def __init__(self, args):
         self.voice = args.voice
         self.show = args.show
-        self.msgformat = ersatznigma.formats.E07aNonTraffic()
+        self.rate = args.rate
+        self.msgformat = ersatznigma.formats.E06SingleMessage(5, 10)
         self.fullmessage = None
         self.instructions = None
 
@@ -74,7 +79,7 @@ class ErsatzNigma:
 
     def speak(self):
         instructions = InstructionFactory().manufacture(self.fullmessage)
-        renderer = Renderer(self.voice, self.show)
+        renderer = Renderer(self.voice, self.show, self.rate)
         for i in instructions:
             logging.debug(i)
             renderer.render(i)
@@ -82,6 +87,7 @@ class ErsatzNigma:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--rate', type=int, help='Speak this many words per minute')
     parser.add_argument('-s', '--show', action='store_true', help='Show number groups as they are being spoken')
     parser.add_argument('-v', '--voice', help='Alternate voice for speaking the numbers')
     args = parser.parse_args()
