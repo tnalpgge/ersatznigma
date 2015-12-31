@@ -39,14 +39,14 @@ class ENonTraffic(Format):
 
 class E07aNonTraffic(ENonTraffic):
     """
-    http://priyom.org/number-stations/english/e07
+    http://priyom.org/number-stations/english/e07a
     """
     def __init__(self):
         super().__init__(147)
 
 class E07aSingleMessage(ESingleMessage):
     """
-    http://priyom.org/number-stations/english/e07
+    http://priyom.org/number-stations/english/e07a
     """
     def __init__(self, slope, intercept):
         super().__init__(318)
