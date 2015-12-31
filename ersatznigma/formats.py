@@ -4,7 +4,7 @@ import random
 
 class Format:
     def generate(self):
-        raise Exception()
+        raise Exception("you must provide your own generate method")
 
     def int2group(self, n, pad=None):
         out = [ ]
